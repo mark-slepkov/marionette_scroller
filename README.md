@@ -1,4 +1,4 @@
-# My own MarionetteJS boilerplate
+# MarionetteJS scroller behavior
 
 ## Building
 
