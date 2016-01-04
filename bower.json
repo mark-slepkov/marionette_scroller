@@ -1,0 +1,20 @@
+{
+  "name": "marionette_scroller",
+  "description": "",
+  "main": "gulpfile.js",
+  "authors": [
+    "mark <self@mark-slepkov.ru>"
+  ],
+  "license": "MIT",
+  "moduleType": [
+    "amd"
+  ],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
