@@ -39,12 +39,14 @@
           top: e.target.offsetTop
         };
         $(window).on('mousemove', _.bind(this.on_mousemove, this));
-        $(window).once('mouseup', _.bind(this.on_mouseup, this));
+        $(window).on('mouseup', _.bind(this.on_mouseup, this));
         return false;
       };
 
       VerticalScrollerView.prototype.on_mouseup = function(e) {
-        return $(window).off('mousemove');
+        console.log(e);
+        $(window).off('mousemove');
+        return $(window).off('mouseup');
       };
 
       VerticalScrollerView.prototype.on_mousemove = function(e) {

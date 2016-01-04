@@ -23,12 +23,13 @@ define(
                     y: e.originalEvent.clientY
                     top: e.target.offsetTop
                 $(window).on('mousemove', _.bind(this.on_mousemove, this))
-                $(window).once('mouseup', _.bind(this.on_mouseup, this))
+                $(window).on('mouseup', _.bind(this.on_mouseup, this))
                 return false
 
             on_mouseup: (e)->
+                console.log(e)
                 $(window).off('mousemove')
-
+                $(window).off('mouseup')
 
             on_mousemove: (e)->
 #                if (e.clientY-this.drag_begin_coords.y) > 0
