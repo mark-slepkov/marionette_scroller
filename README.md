@@ -2,7 +2,7 @@
 
 ## Building
 
-Type next commands:
+Type the next commands:
 
 **$** npm install
 
