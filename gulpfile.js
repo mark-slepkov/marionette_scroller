@@ -11,6 +11,7 @@ var webpack = require("webpack");
 var paths = {
     stylus: {
         src: 'src/**/*.styl',
+        example_src: 'example/**/*.styl',
         dest: 'dist/'
     },
     coffee: {
@@ -19,6 +20,7 @@ var paths = {
     },
     html: {
         src: 'src/**/*.html',
+        example_src: 'example/tmpl/**/*.html',
         dest: 'dist/',
         example: 'example/'
     },
@@ -28,7 +30,7 @@ var paths = {
     },
     js:{
         src: {
-            entry: "example/init.js",
+            entry: "example/init.coffee",
             compiled: "dist/**.js"
         }
     }
@@ -37,14 +39,21 @@ var paths = {
 
 
 gulp.task('stylus', function(){
-    gulp.src(paths.stylus.src).pipe(stylus()).pipe(gulp.dest(paths.stylus.dest)).pipe(concat('style.css')).pipe(gulp.dest(paths.css.dest))
+    gulp.src(paths.stylus.src)
+        .pipe(stylus())
+        .pipe(gulp.dest(paths.stylus.dest));
+
+    gulp.src([paths.stylus.src, paths.stylus.example_src])
+        .pipe(stylus())
+        .pipe(concat('style.css'))
+        .pipe(gulp.dest(paths.css.dest))
 });
 
 gulp.task('html', function(){
     gulp.src(paths.html.src).pipe(gulp.dest(paths.html.dest));
 
-    var regexp = new RegExp('^.*\/src\/tmpl\/(.*)\/(.*)\/template.html$'); // Маска, по которой будет формироваться ID шаблона
-    gulp.src(paths.html.src)
+    var regexp = new RegExp('^.*\/tmpl\/(.*)\/(.*)\/template.html$'); // Маска, по которой будет формироваться ID шаблона
+    gulp.src([paths.html.src, paths.html.example_src])
     .pipe(header('<script type="text/template" id="<% m = file.path.match(mask) %><%=m[1]%>-<%=m[2]%>">', {mask: regexp}))// Оборачиваем шаблон в <script ...> и генерим для него id
     .pipe(footer('</script>'))
     .pipe(concat('compiled_templates.html'))
@@ -75,6 +84,11 @@ gulp.task('webpack', function(callback){
             alias: {
                 marionette: 'backbone.marionette'
             }
+        },
+        module: {
+            loaders: [
+                { test: /\.coffee$/, loader: "coffee" }
+            ]
         },
         devtool: "source-map",
         plugins: [

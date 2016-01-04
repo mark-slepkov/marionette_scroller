@@ -3,8 +3,10 @@
     hasProp = {}.hasOwnProperty;
 
   define(function(require, exports, module) {
-    var Marionette, VerticalScrollerView, vertical_scroller;
+    var $, Marionette, VerticalScrollerView, _, vertical_scroller;
     Marionette = require('marionette');
+    _ = require('underscore');
+    $ = require('jquery');
     VerticalScrollerView = (function(superClass) {
       extend(VerticalScrollerView, superClass);
 
@@ -16,8 +18,41 @@
 
       VerticalScrollerView.prototype.__application__ = 'vertical_scroller';
 
+      VerticalScrollerView.prototype.ui = {
+        scroller_button: '[data-content="scroller-button"]'
+      };
+
+      VerticalScrollerView.prototype.events = {
+        'dragstart @ui.scroller_button': 'on_drag_start'
+      };
+
       VerticalScrollerView.prototype.initialize = function() {
         return this.generate_template();
+      };
+
+      VerticalScrollerView.prototype.on_drag_start = function(e) {
+        e.preventDefault();
+        console.log(e);
+        this.drag_begin_coords = {
+          x: e.originalEvent.clientX,
+          y: e.originalEvent.clientY,
+          top: e.target.offsetTop
+        };
+        $(window).on('mousemove', _.bind(this.on_mousemove, this));
+        $(window).once('mouseup', _.bind(this.on_mouseup, this));
+        return false;
+      };
+
+      VerticalScrollerView.prototype.on_mouseup = function(e) {
+        return $(window).off('mousemove');
+      };
+
+      VerticalScrollerView.prototype.on_mousemove = function(e) {
+        console.log(this.drag_begin_coords.top);
+        this.ui.scroller_button.css({
+          top: this.drag_begin_coords.top + (e.clientY - this.drag_begin_coords.y)
+        });
+        return console.log(e);
       };
 
       return VerticalScrollerView;
@@ -31,13 +66,77 @@
       }
 
       vertical_scroller.prototype.defaults = {
-        outer: '[data-ui="scroller-outer"]',
-        inner: '[data-ui="scroller-inner"]',
         step: 100
       };
 
+      vertical_scroller.prototype.ui = {
+        outer: '[data-ui="scroller-outer"]',
+        inner: '[data-ui="scroller-inner"]'
+      };
+
+      vertical_scroller.prototype.events = {
+        'wheel @ui.outer': 'on_scroll',
+        'mouseenter @ui.outer': 'on_mouseenter',
+        'mouseleave @ui.outer': 'on_mouseleave'
+      };
+
       vertical_scroller.prototype.initialize = function() {
+        console.log("Vertical Scroller Init");
+        this.view.on('render', this.on_view_render, this);
         return this;
+      };
+
+      vertical_scroller.prototype.on_view_render = function() {
+        this.vertical_scroller_view = new VerticalScrollerView();
+        this.ui.outer.append(this.vertical_scroller_view.$el);
+        return this.vertical_scroller_view.render();
+      };
+
+      vertical_scroller.prototype.on_scroll = function(e) {
+        var current_margin_top, delta, inner_height, outer_height;
+        e.preventDefault();
+        if ((e.originalEvent.wheelDeltaY < 0) || (e.originalEvent.deltaY > 0)) {
+          current_margin_top = Number(this.ui.inner.css('marginTop').replace('px', ''));
+          inner_height = this.ui.inner.height();
+          outer_height = this.ui.outer.height();
+          delta = this.options.step;
+          if (inner_height - outer_height > 0) {
+            if ((inner_height - outer_height + current_margin_top) > delta) {
+              this.ui.inner.stop().animate({
+                marginTop: "-=" + delta
+              }, 200);
+            } else {
+              this.ui.inner.stop().css({
+                marginTop: -inner_height + outer_height
+              }, 200);
+            }
+          }
+        } else {
+          current_margin_top = Number(this.ui.inner.css('marginTop').replace('px', ''));
+          delta = this.options.step;
+          if ((current_margin_top + delta) > 0) {
+            this.ui.inner.stop().css({
+              marginTop: "0"
+            }, 200);
+          } else {
+            this.ui.inner.stop().animate({
+              marginTop: "+=" + delta
+            }, 200);
+          }
+        }
+        return false;
+      };
+
+      vertical_scroller.prototype.on_mouseenter = function() {
+        return this.vertical_scroller_view.$el.stop().animate({
+          opacity: 1
+        });
+      };
+
+      vertical_scroller.prototype.on_mouseleave = function() {
+        return this.vertical_scroller_view.$el.stop().animate({
+          opacity: 0
+        });
       };
 
       return vertical_scroller;
