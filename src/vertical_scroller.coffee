@@ -12,12 +12,28 @@ define(
             events:
                 'dragstart @ui.scroller_button': 'on_drag_start'
 
-            initialize: ()->
+            initialize: (options)->
                 this.generate_template()
+                this.parent_view =
+                    view: options.view
+                    inner: options.inner
+                    outer: options.outer
+                this.parent_view.view.$el.on('DOMSubtreeModified', _.bind(this.resize, this))
+
+            onRender: ()->
+                this.rendered = true
+                this.resize()
+
+            resize: ()->
+                console.log('resize')
+                if this.rendered
+                    scroller_button_height = this.parent_view.outer.height()/this.parent_view.inner.height()
+                    if scroller_button_height > 1
+                        scroller_button_height = 1
+                    this.ui.scroller_button.css(height: scroller_button_height*100+'%')
 
             on_drag_start: (e)->
                 e.preventDefault()
-                console.log(e)
                 this.drag_begin_coords =
                     x: e.originalEvent.clientX
                     y: e.originalEvent.clientY
@@ -27,17 +43,13 @@ define(
                 return false
 
             on_mouseup: (e)->
-                console.log(e)
                 $(window).off('mousemove')
                 $(window).off('mouseup')
 
             on_mousemove: (e)->
 #                if (e.clientY-this.drag_begin_coords.y) > 0
-                console.log(this.drag_begin_coords.top)
                 this.ui.scroller_button.css(top: (this.drag_begin_coords.top + (e.clientY-this.drag_begin_coords.y)))
 
-
-                console.log(e)
 
         class vertical_scroller extends Marionette.Behavior
             defaults:
@@ -56,7 +68,11 @@ define(
                 return this
 
             on_view_render: ()->
-                this.vertical_scroller_view = new VerticalScrollerView()
+                this.vertical_scroller_view = new VerticalScrollerView(
+                    view: this.view
+                    inner: this.ui.inner
+                    outer: this.ui.outer
+                )
                 this.ui.outer.append(this.vertical_scroller_view.$el)
                 this.vertical_scroller_view.render()
 
@@ -84,10 +100,12 @@ define(
                 return false
 
             on_mouseenter: ()->
-                this.vertical_scroller_view.$el.stop().animate(opacity: 1)
+#                this.vertical_scroller_view.$el.stop().animate(opacity: 1)
 
             on_mouseleave: ()->
-                this.vertical_scroller_view.$el.stop().animate(opacity: 0)
+#                this.vertical_scroller_view.$el.stop().animate(opacity: 0)
 
         return vertical_scroller
 )
+# vip 450 500 550
+# престиж 650

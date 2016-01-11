@@ -6,12 +6,12 @@
     <script src="build.js"></script>
     <link rel="stylesheet" href="style.css">
     <script type="text/template" id="vertical_scroller-default"><div class="scroller-button" data-content="scroller-button" draggable="true"></div></script>
+    <script type="text/template" id="item-default"><hr /></script>
     <script type="text/template" id="example-default">Это тестовая вьюха в которую должен быть встроен скроллер
+    <button data-action="add-item">Add Item</button>
     <hr>
     <div data-ui="scroller-outer">
-        <div data-ui="scroller-inner">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eaque, et ex fugit itaque, iusto nam placeat quaerat quasi quibusdam quo similique unde, vel veritatis. Accusantium amet ducimus earum quos suscipit.
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci at corporis dolore dolores earum illum impedit ipsum laboriosam libero magni minus nemo nisi perspiciatis possimus ratione ullam unde vitae, voluptatem!
+        <div data-ui="scroller-inner" data-region="items">
         </div>
     </div></script>
 </head>

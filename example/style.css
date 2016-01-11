@@ -4,7 +4,6 @@
   height: 100%;
   top: 0;
   right: 0;
-  opacity: 0;
 }
 [data-module="marionette_ui"][data-application="vertical_scroller"][data-template="default"] .scroller-button {
   position: absolute;

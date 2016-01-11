@@ -1,7 +1,7 @@
 {
   "name": "marionette_scroller",
   "description": "",
-  "main": "gulpfile.js",
+  "main": "dist/vertical_scroller",
   "authors": [
     "mark <self@mark-slepkov.ru>"
   ],
